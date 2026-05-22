@@ -1,6 +1,18 @@
 ## Compose sample application
 ### React application with a NodeJS backend and a MongoDB database
 
+## Single-container Docker build
+
+The root `Dockerfile` builds the React frontend, copies the production build into
+the Express backend, and starts the application on port 3000. For the local
+single-container run it uses an in-memory todo store, so no separate MongoDB
+container is required.
+
+```
+docker build -t my-app:local .
+docker run -p 3000:3000 my-app:local
+```
+
 Project structure:
 ```
 .

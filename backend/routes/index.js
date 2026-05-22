@@ -3,10 +3,19 @@ const serverResponses = require("../utils/helpers/responses");
 const messages = require("../config/messages");
 const { Todo } = require("../models/todos/todo");
 
+const memoryTodos = [];
+
 const routes = (app) => {
   const router = express.Router();
 
   router.post("/todos", (req, res) => {
+    if (process.env.USE_MEMORY_DB === "true") {
+      const todo = { text: req.body.text };
+      memoryTodos.push(todo);
+      serverResponses.sendSuccess(res, messages.SUCCESSFUL, todo);
+      return;
+    }
+
     const todo = new Todo({
       text: req.body.text,
     });
@@ -22,6 +31,11 @@ const routes = (app) => {
   });
 
   router.get("/", (req, res) => {
+    if (process.env.USE_MEMORY_DB === "true") {
+      serverResponses.sendSuccess(res, messages.SUCCESSFUL, memoryTodos);
+      return;
+    }
+
     Todo.find({}, { __v: 0 })
       .then((todos) => {
         serverResponses.sendSuccess(res, messages.SUCCESSFUL, todos);

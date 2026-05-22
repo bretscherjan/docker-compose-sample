@@ -4,6 +4,12 @@
 const mongoose = require("mongoose");
 
 exports.connect = (app) => {
+  if (process.env.USE_MEMORY_DB === "true") {
+    console.log("Using in-memory todo store");
+    process.nextTick(() => app.emit("ready"));
+    return;
+  }
+
   const options = {
     useNewUrlParser: true,
     autoIndex: false, // Don't build indexes
